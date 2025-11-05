@@ -3,10 +3,12 @@ package mthree.com.fullstackschool.dao;
 import mthree.com.fullstackschool.dao.mappers.CourseMapper;
 import mthree.com.fullstackschool.model.Course;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+
+import java.sql.*;
 import java.util.List;
 
 @Repository
@@ -22,8 +24,23 @@ public class CourseDaoImpl implements CourseDao {
     public Course createNewCourse(Course course) {
         //YOUR CODE STARTS HERE
 
+        final String sql = "INSERT INTO course(courseCode, courseDesc, teacherId)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        return null;
+        jdbcTemplate.update((Connection conn)->{
+            PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, course.getCourseName());
+            statement.setString(2, course.getCourseDesc());
+            statement.setInt(3, course.getTeacherId());
+            return statement;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if(key != null)
+        {
+            course.setCourseId(key.intValue());
+        }
+        return course;
 
         //YOUR CODE ENDS HERE
     }
