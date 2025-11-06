@@ -108,20 +108,25 @@ public class StudentServiceImpl implements StudentServiceInterface {
 
         try
         {
-            // Create a new CourseServiceImpl()
-            courseService = new CourseServiceImpl();
+            // Use the autowired courseService instead of creating a new one
+            if (courseService == null) {
+                System.out.println("Course Service Layer is null");
+                return;
+            }
 
             course = courseService.getCourseById(courseId);
 
-        }catch(NullPointerException ex)
+        }catch(Exception ex)
         {
-            System.out.println("Course Service Layer is null");
+            System.out.println("Error accessing Course Service Layer: " + ex.getMessage());
+            return;
         }
 
         //Validation checks
         if(student.getStudentFirstName().equals("Student Not Found"))
         {
             System.out.println("Student not found");
+            return;
         }
 
         //If null, just stop
@@ -133,6 +138,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
         else if(course.getCourseName().equals("Course Not Found"))
         {
             System.out.println("Course not found");
+            return;
         }
 
         //if it exists
@@ -142,6 +148,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
         //YOUR CODE ENDS HERE
     }
 
+
     public void addStudentToCourse(int studentId, int courseId) {
         //YOUR CODE STARTS HERE
 
@@ -150,10 +157,17 @@ public class StudentServiceImpl implements StudentServiceInterface {
 
         try {
             //Create a new CourseServiceImpl()
-            courseService = new CourseServiceImpl();
+            //We actually use the autowired service here if available
+            if (courseService == null) {
+                System.out.println("Course Service Layer is null");
+                return;
+            }
+
             course = courseService.getCourseById(courseId);
-        } catch (NullPointerException ex) {
-            System.out.println("Course Service Layer is null");
+
+        } catch (Exception ex) {
+            System.out.println("Error accessing Course Service Layer: " + ex.getMessage());
+            return;
         }
 
         //Validation checks
@@ -181,7 +195,7 @@ public class StudentServiceImpl implements StudentServiceInterface {
             System.out.println("Student: " + studentId + " already enrolled in course: " + courseId);
         }
 
-
         //YOUR CODE ENDS HERE
     }
+
 }
